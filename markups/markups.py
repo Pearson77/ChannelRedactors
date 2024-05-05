@@ -25,3 +25,11 @@ __channels_management_buttons = [
     [InlineKeyboardButton(text="В главное меню", callback_data="back_to_home")],
 ]
 channels_markup = InlineKeyboardMarkup(inline_keyboard=__channels_management_buttons)
+
+
+__schedule_buttons = [
+    [InlineKeyboardButton(text="По будням", callback_data="5&2")],
+    [InlineKeyboardButton(text="По выходным", callback_data="2")],
+    [InlineKeyboardButton(text="2 через 2", callback_data="2&2")],
+]
+schedule_markup = InlineKeyboardMarkup(inline_keyboard=__schedule_buttons)

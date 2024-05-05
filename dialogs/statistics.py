@@ -1,7 +1,7 @@
 from aiogram import Router
 from aiogram.types import Message, CallbackQuery
 
-from filters.filters import Call
+from filters.callbacks import Call
 
 
 router = Router()

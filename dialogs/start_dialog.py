@@ -3,7 +3,7 @@ from aiogram import Router
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart
 from markups.markups import start_markup, channels_markup, redactors_markup
-from filters.filters import Call
+from filters.callbacks import Call
 
 router = Router()
 
