@@ -1,11 +1,11 @@
 from aiogram import Router
 from aiogram.types import Message, CallbackQuery
-from aiogram.filters import Command
 
+from filters.filters import Call
 
 router = Router()
 
 
-@router.message()
-async def on_message(message: Message):
+@router.callback_query(Call("redactors_edit"))
+async def edit_redactor(callback: CallbackQuery):
     pass
