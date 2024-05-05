@@ -3,7 +3,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
 engine = create_engine('sqlite:///database.db', echo=True)
-
 Base = declarative_base()
 
 
@@ -42,25 +41,3 @@ class ChannelAccess(Base):
 def get_session():
     session_maker = sessionmaker(bind=engine)
     return session_maker()
-
-
-# # Создаем таблицы в базе данных
-# Base.metadata.create_all(engine)
-#
-# # Создаем сессию для работы с базой данных
-# Session = sessionmaker(bind=engine)
-# session = Session()
-#
-# # Пример добавления данных в базу данных
-# channel = Channel(name="General News")
-# redactor = Redactor(tg_id=123456, username="admin123", schedule_type="daily", next_act_type="post",
-#                     next_act_time=datetime.datetime.now())
-#
-# # Добавляем связь между каналом и редактором
-# channel_access = ChannelAccess(redactor=redactor, channel=channel)
-#
-# # Добавляем объекты в сессию и сохраняем изменения
-# session.add(channel)
-# session.add(redactor)
-# session.add(channel_access)
-# session.commit()
