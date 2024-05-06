@@ -10,7 +10,7 @@ from models.services import delete_user
 router = Router()
 
 
-class Dialog(StatesGroup):
+class DeleteDialog(StatesGroup):
     user_id = State()
 
 
@@ -18,17 +18,17 @@ class Dialog(StatesGroup):
 async def delete_redactor(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer("Введите ID пользователя для удаления:")
     await callback.message.delete_reply_markup()
-    await state.set_state(Dialog.user_id)
+    await state.set_state(DeleteDialog.user_id)
 
 
-@router.message(StateFilter(Dialog.user_id))
+@router.message(StateFilter(DeleteDialog.user_id))
 async def get_redactor_id(message: Message, state: FSMContext):
     try:
         user_id = int(message.text)
     except ValueError:
         return await message.answer("Некорректно указан ID пользователя, введите повторно")
 
+    await state.clear()
     if await delete_user(user_id):
-        await message.answer("Редактор успешно удалён")
-        return await state.clear()
+        return await message.answer("Редактор успешно удалён")
     await message.answer("Редактор с таким ID не найден!")

@@ -38,7 +38,9 @@ async def new_user_act(session, user_id, next_act_type, next_act_time):
     session.commit()
 
 
-async def update_user(session, user_id, schedule_type, next_act_type, next_act_time, start_time, end_time):
+async def update_user(
+    session, user_id, schedule_type=None, next_act_type=None, next_act_time=None, start_time=None, end_time=None
+):
     redactor = session.query(Redactor).filter_by(id=user_id).first()
     if schedule_type: redactor.schedule_type = schedule_type
     if next_act_type: redactor.next_act_type = next_act_type
@@ -55,5 +57,6 @@ async def delete_user(user_id, session=get_session()) -> bool:
     session.execute(delete(Redactor).where(Redactor.id == user_id))
     session.commit()
 
-    ...
+    session.execute(delete(ChannelAccess).where(ChannelAccess.redactor_id == user_id))
+    session.commit()
     return True
