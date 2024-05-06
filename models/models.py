@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine, Column, Integer, String, BigInteger, TIMESTAMP, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 
 engine = create_engine('sqlite:///database.db')
 Base = declarative_base()
@@ -17,12 +16,12 @@ class Channel(Base):
 
 class Redactor(Base):
     __tablename__ = 'redactors'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    tg_id = Column(BigInteger, nullable=False)
-    username = Column(String(32), nullable=False)
+    id = Column(BigInteger, primary_key=True, nullable=False)
     schedule_type = Column(String(32), nullable=False)
     next_act_type = Column(String(32), nullable=False)
-    next_act_time = Column(TIMESTAMP, nullable=False)
+    next_act_time = Column(TIMESTAMP(), nullable=False)
+    start_time = Column(TIMESTAMP(), nullable=False)
+    end_time = Column(TIMESTAMP(), nullable=False)
 
     # Отношение к 'access' через 'RedactorAccess'
     accesses = relationship("ChannelAccess", back_populates="redactor")
@@ -41,3 +40,8 @@ class ChannelAccess(Base):
 def get_session():
     session_maker = sessionmaker(bind=engine)
     return session_maker()
+
+
+def reset_tables():
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)

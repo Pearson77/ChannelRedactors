@@ -6,6 +6,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters.state import StateFilter
 from aiogram.fsm.context import FSMContext
 
+from services.schedule.schedule import create_first_task
 from filters.messages import DateMessage, TimeMessage
 from markups.markups import schedule_markup
 from filters.callbacks import Call
@@ -71,14 +72,15 @@ async def get_start_date(message: Message, state: FSMContext):
 @router.message(StateFilter(Dialog.schedule_time), TimeMessage())
 async def get_schedule_time(message: Message, state: FSMContext, start: str, end: str):
     start_h, start_m = map(int, start.split(":"))
-    start_time = datetime.time(start_h, start_m)
+    start_time = datetime.datetime(1000, 1, 1, hour=start_h, minute=start_m)
     end_h, end_m = map(int, end.split(":"))
-    end_time = datetime.time(end_h, end_m)
+    end_time = datetime.datetime(1000, 1, 1, hour=end_h, minute=end_m)
     data = await state.get_data()
     data["start_time"] = start_time
     data["end_time"] = end_time
 
-    # Запись в базу данных
+    # Запись в базу данных и создание задачи
+    await create_first_task(**data)
 
     await message.answer("Редактор успешно назначен!")
     await state.clear()
