@@ -1,7 +1,5 @@
 import openpyxl
 
-from services.statistics.scrap_channel_info import scrap_channel_list
-
 
 def create_excel_table(data):
     # Создаем новую книгу (Excel файл)
@@ -17,8 +15,6 @@ def create_excel_table(data):
     row = 2
 
     for item in data:
-        print(item)
-
         channel_id = str(item['id'])
         views = item['stat']['views']
         forwards = item['stat']['forwards']
@@ -31,10 +27,3 @@ def create_excel_table(data):
 
     # Сохраняем книгу под заданным именем
     wb.save('example.xlsx')
-
-    print("Excel файл успешно создан.")
-
-
-if __name__ == '__main__':
-    data = scrap_channel_list([-1002080144780])
-    create_excel_table(data=data)

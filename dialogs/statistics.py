@@ -1,13 +1,14 @@
 import os
 
 from aiogram import Router
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters.state import StateFilter
 from aiogram.fsm.context import FSMContext
 
 from models.services import get_channels_list
 from services.statistics.scrap_channel_info import scrap_channel_list, create_client_session
+from services.statistics.excel_writing import create_excel_table
 from filters.callbacks import Call
 
 router = Router()
@@ -32,6 +33,7 @@ async def get_phone_code(message: Message, state: FSMContext):
     phone_hash = (await state.get_data())["hash"]
     channels_list = await get_channels_list()
     client_answer = await create_client_session(message.text, phone_hash)
-    print(await scrap_channel_list(client_answer, channels_list))
-    os.remove("session_name.session")
+    data = await scrap_channel_list(client_answer, channels_list)
+    create_excel_table(data)
+    await message.answer_document(FSInputFile("example.xlsx"))
     await state.clear()
