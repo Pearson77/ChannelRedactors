@@ -6,7 +6,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters.state import StateFilter
 from aiogram.fsm.context import FSMContext
 
-from filters.messages import DateMessage
+from filters.messages import DateMessage, TimeMessage
 from markups.markups import schedule_markup
 from filters.callbacks import Call
 
@@ -63,8 +63,19 @@ async def get_start_date(message: Message, state: FSMContext):
     day, month, year = map(int, message.text.split("."))
     date = datetime.date(year, month, day)
     await state.update_data({"start_date": date})
+    await message.add_answer("Выберите промежуток времени работы")
+    await state.set_state(Dialog.schedule_time)
 
 
-@router.message(StateFilter(Dialog.schedule_time))
-async def get_schedule_time(message: Message, state: FSMContext):
-    pass
+@router.message(StateFilter(Dialog.schedule_time), TimeMessage())
+async def get_schedule_time(message: Message, state: FSMContext, start: str, end: str):
+    start_h, start_m = map(int, start.split(":"))
+    start_time = datetime.time(start_h, start_m)
+    end_h, end_m = map(int, end.split(":"))
+    end_time = datetime.time(end_h, end_m)
+    data = await state.get_data()
+    data["start_time"] = start_time
+    data["end_time"] = end_time
+    print(data)
+    await message.answer("Редактор успешно назначен!")
+    await state.clear()
