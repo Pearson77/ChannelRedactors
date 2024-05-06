@@ -21,11 +21,11 @@ class Dialog(StatesGroup):
     start_date = State()
 
 
-@router.callback_query(Call("channels_add"))
-async def add_channel(callback: CallbackQuery, state: FSMContext):
+@router.callback_query(Call("redactors_add"))
+async def add_redactor(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer("Введите Telegram ID пользователя")
-    await callback.message.delete()
-    await state.set_state()
+    await callback.message.delete_reply_markup()
+    await state.set_state(Dialog.user_id)
 
 
 @router.message(StateFilter(Dialog.user_id))
@@ -51,6 +51,7 @@ async def get_username(message: Message, state: FSMContext):
 @router.callback_query(StateFilter(Dialog.schedule_type))
 async def get_schedule_type(callback: CallbackQuery, state: FSMContext):
     await state.update_data({"schedule_type": callback.data})
+    await callback.message.delete_reply_markup()
     if callback.data == "2&2":
         await callback.message.answer("Выберите дату старта графика:")
         return await state.set_state(Dialog.start_date)
@@ -63,7 +64,7 @@ async def get_start_date(message: Message, state: FSMContext):
     day, month, year = map(int, message.text.split("."))
     date = datetime.date(year, month, day)
     await state.update_data({"start_date": date})
-    await message.add_answer("Выберите промежуток времени работы")
+    await message.answer("Укажите промежуток времени работы\nФормат ввода: 10:00 - 18:00")
     await state.set_state(Dialog.schedule_time)
 
 
@@ -76,6 +77,8 @@ async def get_schedule_time(message: Message, state: FSMContext, start: str, end
     data = await state.get_data()
     data["start_time"] = start_time
     data["end_time"] = end_time
-    print(data)
+
+    # Запись в базу данных
+
     await message.answer("Редактор успешно назначен!")
     await state.clear()
