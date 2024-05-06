@@ -48,6 +48,12 @@ async def update_user(session, user_id, schedule_type, next_act_type, next_act_t
     session.commit()
 
 
-async def delete_user(session, user_id):
+async def delete_user(user_id, session=get_session()) -> bool:
+    redactor = session.query(Redactor).filter_by(id=user_id).first()
+    if not redactor:
+        return False
     session.execute(delete(Redactor).where(Redactor.id == user_id))
     session.commit()
+
+    ...
+    return True
