@@ -84,5 +84,10 @@ async def get_users_list(session=get_session()):
     return session.query(Redactor).all()
 
 
+async def get_channels_list(session=get_session()):
+    channels = session.query(Channel).all()
+    return [channel.id for channel in channels]
+
+
 async def get_user_channels(user_id, session=get_session()):
     return session.query(ChannelAccess).filter_by(ChannelAccess.redactor_id == user_id).all()

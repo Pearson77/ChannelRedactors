@@ -1,6 +1,6 @@
 import openpyxl
 
-from ChannelRedactors.services.statistics.scrap_channel_info import scrap_channel_list
+from services.statistics.scrap_channel_info import scrap_channel_list
 
 
 def create_excel_table(data):

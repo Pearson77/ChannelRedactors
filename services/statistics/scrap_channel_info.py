@@ -1,26 +1,35 @@
-import csv
 import datetime
 
 from telethon.sync import TelegramClient
+from telethon.tl.types.auth import SentCode
 from telethon.tl.functions.messages import GetHistoryRequest
 
-from config import *
-
-client = TelegramClient('session_name', api_id, api_hash)
-client.connect()
-# Авторизация пользователя
-if not client.is_user_authorized():
-    client.send_code_request(phone)
-    client.sign_in(phone, input('Введите код из SMS: '))
+from config import Config
+config = Config()
 
 
-def get_messages_by_date(dt: datetime.datetime, channel_id: int):
+async def create_client_session(code: str | None = None, phone_hash: SentCode | None = None):
+    client = TelegramClient('session_name', config.API_ID, config.API_HASH)
+    await client.connect()
+
+    if not client or not await client.is_user_authorized():
+        if code:
+            await client.sign_in(config.PHONE, code, phone_code_hash=phone_hash.phone_code_hash)
+            return client
+        else:
+            return await client.send_code_request(config.PHONE)
+    else:
+        return client
+
+
+async def get_messages_by_date(client, dt: datetime.datetime, channel_id: int):
     all_messages = []
     total_count_limit = 0
     total_messages = 0
     offset_id = 0
+
     while True:
-        history = client(GetHistoryRequest(
+        history = await client(GetHistoryRequest(
             peer=channel_id,
             offset_id=offset_id,
             offset_date=dt,
@@ -70,7 +79,7 @@ def exclude_old_posts(posts_before_today, posts_before_week):
     return posts_before_today
 
 
-def get_last_week_messages(channel_id):
+async def get_last_week_messages(client, channel_id):
     """
         algorithm:
         s1 = get posts before last week
@@ -80,14 +89,14 @@ def get_last_week_messages(channel_id):
     """
     today = datetime.date.today()  # get today
     week_ago = datetime.date.today() - datetime.timedelta(days=today.weekday() + 7)  # get last week start
-    posts_before_week = get_messages_by_date(week_ago, channel_id)  # s1
-    posts_before_today = get_messages_by_date(today, channel_id)  # s2
+    posts_before_week = await get_messages_by_date(client, week_ago, channel_id)  # s1
+    posts_before_today = await get_messages_by_date(client, today, channel_id)  # s2
     # excluding
     new_posts = exclude_old_posts(posts_before_today, posts_before_week)
     return new_posts
 
 
-def summarize_stat(all_messages: list[dict]) -> dict[str, int]:
+async def summarize_stat(all_messages: list[dict]) -> dict[str, int]:
     week_forwards = 0
     week_views = 0
     for light_message in all_messages:
@@ -96,22 +105,21 @@ def summarize_stat(all_messages: list[dict]) -> dict[str, int]:
     return {'views': week_views, 'forwards': week_forwards}
 
 
-def scrap_channel_list(channels: list[int]) -> dict[int, dict[str, int]]:
+async def scrap_channel_list(client, channels: list[int]) -> dict[int, dict[str, int]]:
     telegram_stat = []
     for channel_id in channels:
         channel_stat_info = {}
-        messages = get_last_week_messages(channel_id)
-        channel_stat = summarize_stat(messages)
+        messages = await get_last_week_messages(client, channel_id)
+        channel_stat = await summarize_stat(messages)
         channel_stat_info['id'] = channel_id
         channel_stat_info['stat'] = channel_stat
         telegram_stat.append(channel_stat_info)
     return telegram_stat
 
 
-def main():
-    lst = [-1002080144780]
-    print(scrap_channel_list(lst))
-
-
-if __name__ == '__main__':
-    main()
+# async def main():
+#     client = await create_client_session()
+#     print(await scrap_channel_list(client, [-1002080144780]))
+#
+#
+# asyncio.run(main())
