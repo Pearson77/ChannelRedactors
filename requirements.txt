@@ -1,3 +1,9 @@
 python-dotenv~=1.0.1
 aiogram~=3.5.0
 SQLAlchemy~=2.0.29
+et-xmlfile==1.1.0
+openpyxl==3.1.2
+pyaes==1.6.1
+pyasn1==0.6.0
+rsa==4.9
+Telethon==1.35.0

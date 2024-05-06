@@ -60,3 +60,29 @@ async def delete_user(user_id, session=get_session()) -> bool:
     session.execute(delete(ChannelAccess).where(ChannelAccess.redactor_id == user_id))
     session.commit()
     return True
+
+
+async def add_channel(channel_id, session=get_session()):
+    session.add(Channel(id=channel_id))
+    session.commit()
+
+
+async def remove_channel(channel_id, session=get_session()):
+    channel = session.query(Channel).filter_by(id=channel_id).first()
+    if not channel:
+        return False
+
+    session.execute(delete(Channel).where(Channel.id == channel_id))
+    session.commit()
+
+    session.execute(delete(ChannelAccess).where(ChannelAccess.channel_id == channel_id))
+    session.commit()
+    return True
+
+
+async def get_users_list(session=get_session()):
+    return session.query(Redactor).all()
+
+
+async def get_user_channels(user_id, session=get_session()):
+    return session.query(ChannelAccess).filter_by(ChannelAccess.redactor_id == user_id).all()

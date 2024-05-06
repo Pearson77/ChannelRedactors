@@ -7,8 +7,7 @@ Base = declarative_base()
 
 class Channel(Base):
     __tablename__ = 'channels'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(32), nullable=False)
+    id = Column(BigInteger, primary_key=True)
 
     # Отношение к 'access' через 'ChannelAccess'
     accesses = relationship("ChannelAccess", back_populates="channel")
