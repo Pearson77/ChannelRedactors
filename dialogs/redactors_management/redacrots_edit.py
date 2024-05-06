@@ -40,7 +40,7 @@ class DialogEdit(StatesGroup):
 async def edit_redactor(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer("Введите Telegram ID пользователя для редактирования")
     await callback.message.delete_reply_markup()
-    '''Todo: Проверка id пользователя (если есть пользователь с таким id, то дальше, иначе ТАКОГО ПОЛЬЗОВАТЕЛЯ НЕТ'''
+    '''Todo: Проверка id пользователя (если есть пользователь с таким id, то дальше, иначе ТАКОГО ПОЛЬЗОВАТЕЛЯ НЕТ)'''
     await state.set_state(DialogEdit.user_id)
 
 
@@ -50,11 +50,11 @@ async def get_user_id(message: Message, state: FSMContext):
         await state.update_data({"user_id": int(message.text)})
         '''Todo: , [InlineKeyboardButton(text="Отмена", callback_data="cancel")] Нужно для возможности отмены действия'''
         await message.answer("Что вы хотите отредактировать?", reply_markup=InlineKeyboardMarkup(row_width=2,
-                                                                                                 inline_keyboard=[[
-                                                                                                     InlineKeyboardButton(
+                                                                                                 inline_keyboard=[
+                                                                                                     [InlineKeyboardButton(
                                                                                                          text="Редактировать каналы",
-                                                                                                         callback_data="edit_channels"),
-                                                                                                     InlineKeyboardButton(
+                                                                                                         callback_data="edit_channels")],
+                                                                                                     [InlineKeyboardButton(
                                                                                                          text="Редактировать график",
                                                                                                          callback_data="edit_schedule")]]))
     except ValueError:
@@ -92,14 +92,14 @@ async def get_channel_id(message: Message, state: FSMContext):
 async def edit_schedule(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer("Выберите тип рабочей недели:",
                                   reply_markup=InlineKeyboardMarkup(row_width=3,
-                                                                    inline_keyboard=[[
-                                                                        InlineKeyboardButton(
+                                                                    inline_keyboard=[
+                                                                        [InlineKeyboardButton(
                                                                             text="Будние",
-                                                                            callback_data="edit_weekdays"),
-                                                                        InlineKeyboardButton(
+                                                                            callback_data="edit_weekdays")],
+                                                                        [InlineKeyboardButton(
                                                                             text="Выходные",
-                                                                            callback_data="edit_weekend"),
-                                                                        InlineKeyboardButton(
+                                                                            callback_data="edit_weekend")],
+                                                                        [InlineKeyboardButton(
                                                                             text="2 через 2",
                                                                             callback_data="edit_2&2")]]))
     await callback.message.delete_reply_markup()
