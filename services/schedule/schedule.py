@@ -1,6 +1,13 @@
-from datetime import date, time, datetime, timedelta
-from models.services import create_user, read_user, new_user_act
+from aiogram import Bot
+
+from datetime import date, datetime, timedelta
+
+from models.services import create_user, read_user, new_user_act, get_user_channels
 from models.models import get_session
+from config import Config
+
+config = Config()
+bot = Bot(config.BOT_TOKEN)
 
 
 async def create_first_task(user_id, channel_id, schedule_type, start_time, end_time, start_date=None):
@@ -62,3 +69,28 @@ async def set_next_task(user_id):
         task_date_time = datetime.combine(current_date, user["end_time"].time())
 
     return new_user_act(get_session(), user_id, next_, task_date_time)
+
+
+async def check_user(user_id):
+    user = await read_user(get_session(), user_id)
+    if user["next_act_time"] > datetime.now():
+        return
+
+    current_task = user["next_act_type"]
+    await set_next_task(user_id)
+    channels = await get_user_channels(user_id)
+
+    if current_task == "add":
+        for channel in channels:
+            await bot.promote_chat_member(
+                chat_id=channel,
+                user_id=user_id,
+                can_post_messages=True
+            )
+    else:
+        for channel in channels:
+            await bot.promote_chat_member(
+                chat_id=channel,
+                user_id=user_id,
+                can_post_messages=False
+            )

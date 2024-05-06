@@ -12,7 +12,7 @@ async def create_client_session(code: str | None = None, phone_hash: SentCode | 
     client = TelegramClient('session_name', config.API_ID, config.API_HASH)
     await client.connect()
 
-    if not client or not await client.is_user_authorized():
+    if not await client.is_user_authorized():
         if code:
             await client.sign_in(config.PHONE, code, phone_code_hash=phone_hash.phone_code_hash)
             return client
