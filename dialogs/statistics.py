@@ -40,7 +40,7 @@ async def get_phone_code(message: Message, state: FSMContext):
     client = data.get("client")
     phone_hash = data.get("hash")
 
-    client.sign_in(config.PHONE, message.text, phone_code_hash=phone_hash)
+    await client.sign_in(config.PHONE, message.text, phone_code_hash=phone_hash)
 
     channels_list = await get_channels_list()
     data = await scrap_channel_list(client, channels_list)

@@ -80,9 +80,8 @@ async def set_next_task(user_id):
 async def check_user(user_id):
     user = await read_user(get_session(), user_id)
     if user["next_act_time"] > datetime.now():
-        print("Ретурн")
         return
-    print("Прошел")
+
     current_task = user["next_act_type"]
     await set_next_task(user_id)
     channels = await get_user_channels(user_id)

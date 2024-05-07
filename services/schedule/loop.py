@@ -10,7 +10,6 @@ async def function():
     try:
         users_list = await get_users_list()
         for user in users_list:
-            print(user)
             await check_user(user)
 
     except:
