@@ -23,6 +23,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
+from markups.markups import edit_markup
 from filters.callbacks import Call
 
 router = Router()
@@ -48,15 +49,7 @@ async def edit_redactor(callback: CallbackQuery, state: FSMContext):
 async def get_user_id(message: Message, state: FSMContext):
     try:
         await state.update_data({"user_id": int(message.text)})
-        '''Todo: , [InlineKeyboardButton(text="Отмена", callback_data="cancel")] Нужно для возможности отмены действия'''
-        await message.answer("Что вы хотите отредактировать?", reply_markup=InlineKeyboardMarkup(row_width=2,
-                                                                                                 inline_keyboard=[[
-                                                                                                     InlineKeyboardButton(
-                                                                                                         text="Редактировать каналы",
-                                                                                                         callback_data="edit_channels"),
-                                                                                                     InlineKeyboardButton(
-                                                                                                         text="Редактировать график",
-                                                                                                         callback_data="edit_schedule")]]))
+        await message.answer("Что вы хотите отредактировать?", reply_markup=edit_markup)
     except ValueError:
         await message.answer("Некорректно указан Telegram ID, введите повторно")
 
@@ -104,6 +97,7 @@ async def edit_schedule(callback: CallbackQuery, state: FSMContext):
                                                                             callback_data="edit_2&2")]]))
     await callback.message.delete_reply_markup()
     await state.set_state(DialogEdit.schedule_type)
+
 
 
 @router.callback_query(StateFilter(DialogEdit.schedule_type))

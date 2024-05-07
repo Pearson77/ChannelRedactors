@@ -5,6 +5,7 @@ from aiogram.filters.state import StateFilter
 from aiogram.fsm.context import FSMContext
 
 from filters.callbacks import Call
+from markups.markups import end_markup
 from models.services import remove_channel
 
 router = Router()
@@ -30,5 +31,5 @@ async def get_channel_id(message: Message, state: FSMContext):
 
     await state.clear()
     if await remove_channel(channel_id):
-        return await message.answer("Канал успешно удалён")
-    await message.answer("Канал с таким ID не найден")
+        return await message.answer("Канал успешно удалён", reply_markup=end_markup)
+    await message.answer("Канал с таким ID не найден", reply_markup=end_markup)

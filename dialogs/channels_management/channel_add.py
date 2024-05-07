@@ -1,3 +1,4 @@
+import aiogram
 from aiogram import Router, Bot
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
@@ -6,6 +7,7 @@ from aiogram.fsm.context import FSMContext
 
 from config import Config
 from filters.callbacks import Call
+from markups.markups import end_markup
 from models.services import add_channel
 
 router = Router()
@@ -32,8 +34,12 @@ async def get_channel_id(message: Message, state: FSMContext):
         return await message.answer("ID указан некорректно, повторите ввод")
 
     await state.clear()
-    admins_info = await bot.get_chat_administrators(channel_id)
-    bot_id = (await bot.get_me()).id
+
+    try:
+        admins_info = await bot.get_chat_administrators(channel_id)
+        bot_id = (await bot.get_me()).id
+    except aiogram.exceptions.TelegramBadRequest:
+        return await message.answer("Я не являюсь администратором указанного канала", reply_markup=end_markup)
 
     admin_obj = None
     for admin in admins_info:
@@ -42,8 +48,9 @@ async def get_channel_id(message: Message, state: FSMContext):
             break
 
     if not admin_obj:
-        return await message.answer("Я не являюсь администратором указанного канала")
+        return await message.answer("Я не являюсь администратором указанного канала", reply_markup=end_markup)
     if not admin_obj.can_promote_members:
-        return await message.answer("Я не могу назначать администраторов канала")
-    await add_channel(channel_id)
-    await message.answer("Канал успешно добавлен!")
+        return await message.answer("Я не могу назначать администраторов канала", reply_markup=end_markup)
+    if not await add_channel(channel_id):
+        return await message.answer("Этот канал уже зарегистрирован!", reply_markup=end_markup)
+    await message.answer("Канал успешно добавлен!", reply_markup=end_markup)

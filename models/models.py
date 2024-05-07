@@ -19,6 +19,7 @@ class Redactor(Base):
     schedule_type = Column(String(32), nullable=False)
     next_act_type = Column(String(32), nullable=False)
     next_act_time = Column(TIMESTAMP(), nullable=False)
+    move_type = Column(String(32), nullable=False)
     start_time = Column(TIMESTAMP(), nullable=False)
     end_time = Column(TIMESTAMP(), nullable=False)
 
