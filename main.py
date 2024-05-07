@@ -1,6 +1,6 @@
 import asyncio
 
-from aiogram import Bot, Dispatcher
+from aiogram import F, Bot, Dispatcher
 
 from services.schedule.loop import starter
 from dialogs import routers
@@ -19,6 +19,13 @@ async def main():
 
     dp.include_routers(*routers)
     dp.startup.register(on_startup)
+
+    dp.message.filter(
+        F.from_user.id == config.ADMIN_ID
+    )
+    dp.callback_query.filter(
+        F.from_user.id == config.ADMIN_ID
+    )
 
     await bot.delete_webhook(True)
     await dp.start_polling(bot)

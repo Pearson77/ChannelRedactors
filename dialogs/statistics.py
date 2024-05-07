@@ -25,7 +25,8 @@ class Statistics(StatesGroup):
 @router.callback_query(Call("channels_stats"))
 async def get_channels_stats(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete_reply_markup()
-    client = TelegramClient('session_name', config.API_ID, config.API_HASH)
+
+    client = TelegramClient('session', config.API_ID, config.API_HASH)
     await client.connect()
     phone_hash = (await client.send_code_request(config.PHONE)).phone_code_hash
 

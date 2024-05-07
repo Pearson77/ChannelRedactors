@@ -1,5 +1,5 @@
 import asyncio
-import threading
+import multiprocessing
 import time
 
 from models.services import get_users_list
@@ -13,17 +13,21 @@ async def function():
             await check_user(user)
 
     except:
-        raise
+        pass
 
 
-def loop():
+async def loop():
     while True:
-        time.sleep(5)
         try:
-            asyncio.run(function())
+            await function()
+            await asyncio.sleep(5)
         except:
-            raise
+            pass
+
+
+def loop_starter():
+    asyncio.run(loop())
 
 
 async def starter():
-    threading.Thread(target=loop).start()
+    multiprocessing.Process(target=loop_starter).start()

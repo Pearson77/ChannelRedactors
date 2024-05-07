@@ -1,4 +1,5 @@
 from aiogram import Bot
+from aiogram.types import ChatPermissions
 
 from datetime import date, datetime, timedelta
 
@@ -89,14 +90,30 @@ async def check_user(user_id):
     if current_task == "add":
         for channel in channels:
             await bot.promote_chat_member(
-                chat_id=channel.channel_id,
                 user_id=user_id,
-                can_post_messages=True
+                chat_id=channel.channel_id,
+                can_post_messages=True,
+                request_timeout=10,
             )
     else:
         for channel in channels:
             await bot.promote_chat_member(
-                chat_id=channel.channel_id,
                 user_id=user_id,
-                can_post_messages=False
+                chat_id=channel.channel_id,
+                is_anonymous=False,
+                can_manage_chat=False,
+                can_delete_messages=False,
+                can_manage_video_chats=False,
+                can_restrict_members=False,
+                can_promote_members=False,
+                can_change_info=False,
+                can_invite_users=False,
+                can_post_stories=False,
+                can_edit_stories=False,
+                can_delete_stories=False,
+                can_post_messages=False,
+                can_edit_messages=False,
+                can_pin_messages=False,
+                can_manage_topics=False,
+                request_timeout=10,
             )
