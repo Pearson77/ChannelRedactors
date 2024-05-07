@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String, BigInteger, TIMES
 from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 
 engine = create_engine('sqlite:///database.db')
+
 Base = declarative_base()
 
 
