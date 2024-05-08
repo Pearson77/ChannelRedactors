@@ -11,7 +11,6 @@ start_markup = InlineKeyboardMarkup(inline_keyboard=__start_buttons)
 
 __redactors_management_buttons = [
     [InlineKeyboardButton(text="Назначить редактора", callback_data="redactors_add")],
-    # [InlineKeyboardButton(text="Изменить редактора", callback_data="redactors_edit")],
     [InlineKeyboardButton(text="Удалить редактора", callback_data="redactors_delete")],
     [InlineKeyboardButton(text="В главное меню", callback_data="back_to_home")],
 ]

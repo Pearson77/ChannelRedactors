@@ -26,4 +26,4 @@ def create_excel_table(data):
         row += 1
 
     # Сохраняем книгу под заданным именем
-    wb.save('example.xlsx')
+    wb.save('table.xlsx')

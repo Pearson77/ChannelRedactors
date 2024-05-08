@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, BigInteger, TIMESTAMP, ForeignKey
+from sqlalchemy import create_engine, Column, String, BigInteger, TIMESTAMP, ForeignKey
 from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 
 engine = create_engine('sqlite:///database.db')

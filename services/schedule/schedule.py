@@ -1,5 +1,4 @@
 from aiogram import Bot
-from aiogram.types import ChatPermissions
 
 from datetime import date, datetime, timedelta
 

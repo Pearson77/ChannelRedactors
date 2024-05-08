@@ -1,6 +1,5 @@
 import asyncio
 import multiprocessing
-import time
 
 from models.services import get_users_list
 from services.schedule.schedule import check_user
@@ -11,7 +10,6 @@ async def function():
         users_list = await get_users_list()
         for user in users_list:
             await check_user(user)
-
     except:
         pass
 

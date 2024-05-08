@@ -1,5 +1,6 @@
 import sqlalchemy
-from sqlalchemy import select, insert, delete, update
+from sqlalchemy import delete
+
 from models.models import *
 
 

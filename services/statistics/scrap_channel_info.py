@@ -80,15 +80,8 @@ def exclude_old_posts(posts_before_today, posts_before_week):
 
 
 async def get_last_week_messages(client, channel_id):
-    """
-        algorithm:
-        s1 = get posts before last week
-        s2 = get posts before today
-        last_week_posts = s2 exclude s1
-
-    """
-    today = datetime.date.today()  # get today
-    week_ago = datetime.date.today() - datetime.timedelta(days=today.weekday() + 7)  # get last week start
+    today = datetime.date.today() + datetime.timedelta(days=1)  # get today
+    week_ago = datetime.date.today() - datetime.timedelta(days=7)  # get last week start
     posts_before_week = await get_messages_by_date(client, week_ago, channel_id)  # s1
     posts_before_today = await get_messages_by_date(client, today, channel_id)  # s2
     # excluding
@@ -115,11 +108,3 @@ async def scrap_channel_list(client, channels: list[int]) -> dict[int, dict[str,
         channel_stat_info['stat'] = channel_stat
         telegram_stat.append(channel_stat_info)
     return telegram_stat
-
-
-# async def main():
-#     client = await create_client_session()
-#     print(await scrap_channel_list(client, [-1002080144780]))
-#
-#
-# asyncio.run(main())
